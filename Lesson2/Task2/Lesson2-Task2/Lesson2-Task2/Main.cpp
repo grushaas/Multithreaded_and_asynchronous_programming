@@ -9,7 +9,7 @@ using namespace std::chrono;
 
 void ProgressBar(double progress, double speed)
 {
-    cout << "Èíäåòèôèêàòîð ïîòîêà: " << this_thread::get_id() << endl;
+    cout << "Ð˜Ð½Ð´ÐµÑ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ Ð¿Ð¾Ñ‚Ð¾ÐºÐ°: " << this_thread::get_id() << endl;
 
     while (progress < 1.0) {
         int barWidth = 70;
@@ -33,14 +33,14 @@ void StartThread(double speed, int NStreams)
 {
     for (int i = 0; i < NStreams; ++i)
     {
-        cout << "Íîìåð ïîòîêà: " << i << endl;
+        cout << "ÐÐ¾Ð¼ÐµÑ€ Ð¿Ð¾Ñ‚Ð¾ÐºÐ°: " << i << endl;
         auto start = chrono::high_resolution_clock::now();
         thread T(ProgressBar, 0.0, speed);
         T.join();
         auto end = chrono::high_resolution_clock::now();
         duration<double, milli> time = end - start;
 
-        cout << "Ñóììàðíîå âðåìÿ: " << time.count() << endl;
+        cout << "Ð¡ÑƒÐ¼Ð¼Ð°Ñ€Ð½Ð¾Ðµ Ð²Ñ€ÐµÐ¼Ñ: " << time.count() << endl;
         cout << endl;
     }
 }

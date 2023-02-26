@@ -1,53 +1,49 @@
 #include <iostream>
-#include <mutex>
 #include <thread>
-#include <Windows.h>
+#include <mutex>
 #include <chrono>
+#include <Windows.h>
+#include <locale.h>
+#include "ProgressBar.h"
 
 using namespace std;
-using namespace std::chrono;
 
-void ProgressBar(double progress, double speed)
+void Threads(int calcLength, int numberThread)
 {
-    cout << "Ð˜Ð½Ð´ÐµÑ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ Ð¿Ð¾Ñ‚Ð¾ÐºÐ°: " << this_thread::get_id() << endl;
-
-    while (progress < 1.0) {
-        int barWidth = 70;
-
-        cout << "[";
-        int pos = barWidth * progress;
-        for (int i = 0; i < barWidth; ++i) {
-            if (i < pos) cout << "=";
-            else if (i == pos) cout << ">";
-            else cout << " ";
-        }
-        cout << "] " << int(progress * 100.0) << " %\r";
-        cout.flush();
-
-        progress += speed;
-    }
-    cout << endl;
+	cout << numberThread << " ";
+	
+	ProgressBar bar(calcLength, 0.005);
+	bar.Start();
 }
 
-void StartThread(double speed, int NStreams)
+void Computing(int numThreads, int calcLength)
 {
-    for (int i = 0; i < NStreams; ++i)
-    {
-        cout << "ÐÐ¾Ð¼ÐµÑ€ Ð¿Ð¾Ñ‚Ð¾ÐºÐ°: " << i << endl;
-        auto start = chrono::high_resolution_clock::now();
-        thread T(ProgressBar, 0.0, speed);
-        T.join();
-        auto end = chrono::high_resolution_clock::now();
-        duration<double, milli> time = end - start;
+	cout << "#    id     Progress Bar    Time" << endl;
+	for (int i = 0; i < numThreads; ++i)
+	{
+		thread th(Threads, calcLength, i);
+		th.join();
+	}
+}
 
-        cout << "Ð¡ÑƒÐ¼Ð¼Ð°Ñ€Ð½Ð¾Ðµ Ð²Ñ€ÐµÐ¼Ñ: " << time.count() << endl;
-        cout << endl;
-    }
+void Start()
+{
+	int numThreads = 0;
+	int calcLength = 0;
+
+	cout << "Ââåäèòå êîëè÷åñòâî ïîòîêîâ: ";
+	cin >> numThreads;
+
+	cout << "Ââåäèòå äëèíó äëÿ ðàñ÷åòà: ";
+	cin >> calcLength;
+	Computing(numThreads, calcLength);
 }
 
 int main()
 {
-    SetConsoleCP(CP_UTF8);
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	setlocale(LC_ALL, "russian");
 
-    StartThread(0.1, 20);
+	Start();
 }

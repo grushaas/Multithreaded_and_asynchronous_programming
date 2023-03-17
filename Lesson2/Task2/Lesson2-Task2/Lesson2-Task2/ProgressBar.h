@@ -4,10 +4,9 @@ class ProgressBar
 {
 private:
 	int barWidth;
-	double speed;
 
 public:
-	ProgressBar(int calcLength, double speed);
+	ProgressBar(int calcLength, short x, short y);
 
 	void Start();
 };

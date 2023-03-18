@@ -23,6 +23,7 @@
     <ClCompile Include="ProgressBar.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsolParametr.h" />
     <ClInclude Include="ProgressBar.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

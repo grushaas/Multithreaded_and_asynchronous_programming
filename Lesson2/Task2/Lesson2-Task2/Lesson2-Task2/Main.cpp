@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <locale.h>
 #include "ProgressBar.h"
+#include "ConsolParametr.h"
 
 using namespace std;
 using namespace this_thread;
@@ -13,42 +14,37 @@ using namespace chrono;
 
 mutex m;
 
-void gotoxy(short x, short y)
-{
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), (COORD{ x, y }));
-}
-
 void CreateTable()
 {
-	gotoxy(0, 0);
+	consoleParameter::setPosition(0, 0);
 	cout << "#";
-	gotoxy(5, 0);
+	consoleParameter::setPosition(5, 0);
 	cout << "id";
-	gotoxy(15, 0);
+	consoleParameter::setPosition(15, 0);
 	cout << "Progress Bar";
-	gotoxy(35, 0);
+	consoleParameter::setPosition(35, 0);
 	cout << "Time";
 }
 
 void Threads(int calcLength, int numThreads, int index)
 {
-	index += 1;
-
-	gotoxy(0, index);
+	//m.lock();
+	consoleParameter::setPosition(0, index);
 	cout << index;
 
-	gotoxy(5, index);
+	consoleParameter::setPosition(5, index);
 	cout << get_id();
-	
-	gotoxy(15, index);
+
+	consoleParameter::setPosition(15, index);
 	auto start = high_resolution_clock::now();
 	ProgressBar bar(calcLength, 15, index);
 	bar.Start();
 	auto end = high_resolution_clock::now();
 	duration<double, milli> time = end - start;
 
-	gotoxy(35, index);
+	consoleParameter::setPosition(35, index);
 	cout << time.count();
+	//m.unlock();
 }
 
 void Computing(int numThreads, int calcLength)
@@ -61,7 +57,7 @@ void Computing(int numThreads, int calcLength)
 
 	for (int i = 0; i < numThreads; ++i)
 	{
-		thread th(Threads, calcLength, numThreads, i);
+		thread th(Threads, calcLength, numThreads, i + 1);
 		ths.push_back(move(th));
 	}
 

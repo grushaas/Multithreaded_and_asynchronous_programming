@@ -26,7 +26,7 @@
     <ClInclude Include="ProgressBar.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ConsolParametr.h">
+    <ClInclude Include="ConsolParameter.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

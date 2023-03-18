@@ -6,7 +6,6 @@
 #include <Windows.h>
 #include <locale.h>
 #include "ProgressBar.h"
-#include "ConsolParametr.h"
 
 using namespace std;
 using namespace this_thread;

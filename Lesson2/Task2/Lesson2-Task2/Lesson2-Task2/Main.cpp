@@ -5,7 +5,7 @@
 #include <vector>
 #include <Windows.h>
 #include <locale.h>
-#include "ProgressBar.h"
+#include "ConsolParameter.h"
 
 using namespace std;
 using namespace this_thread;
@@ -27,23 +27,30 @@ void CreateTable()
 
 void Threads(int calcLength, int numThreads, int index)
 {
-	//m.lock();
+	m.lock();
 	consoleParameter::setPosition(0, index);
 	cout << index;
 
 	consoleParameter::setPosition(5, index);
 	cout << get_id();
+	m.unlock();
 
-	consoleParameter::setPosition(15, index);
 	auto start = high_resolution_clock::now();
-	ProgressBar bar(calcLength, 15, index);
-	bar.Start();
+	for (int j = 15; j < calcLength + 15; ++j)
+	{
+		this_thread::sleep_for(250ms);
+		m.lock();
+		consoleParameter::setPosition(j, index);
+		cout << "*";
+		m.unlock();
+	}
+	m.lock();
 	auto end = high_resolution_clock::now();
 	duration<double, milli> time = end - start;
 
 	consoleParameter::setPosition(35, index);
 	cout << time.count();
-	//m.unlock();
+	m.unlock();
 }
 
 void Computing(int numThreads, int calcLength)

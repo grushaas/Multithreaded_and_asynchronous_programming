@@ -1,68 +1,35 @@
 #include <iostream>
 #include <future>
-#include <thread>
+#include <iterator>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-void addOne(vector<int> vec)
+void print(const int& i)
 {
-    int const size = vec.size();
-    int count = 0;
-    while(count <= size)
-    {
-        vec[count] += 1;
-        ++count;
-    }
-
-    cout << "Done!" << endl;
+    cout << i << " ";
 }
 
-void print(vector<int> vec)
+void parallelFor_each(vector<int>::iterator begin, vector<int>::iterator end, void (&func)(const int&))
 {
-    int const size = vec.size();
-    for(int i = 0; i < size; ++i)
+    unsigned int const length = distance(begin, end);
+    unsigned int const max_chunk_size = 25;
+    if(length <= max_chunk_size)
     {
-        cout << vec[i] << " ";
+        for_each(begin, end, func);
     }
-    cout << "Done!" << endl;
-}
-
-void asyncDivider(vector<int>::iterator itBegin, vector<int>::iterator itEnd, promise<vector<int>> vec_promise)
-{
-    vector<int> newVec;
-    int maxElements = 5;
-    int blocks = (itEnd - itBegin) / maxElements;
-
-    itEnd -= 5;
-
-    for(int i = 0; i < maxElements; ++i)
+    else
     {
-        int number = *itBegin;
-        newVec[i] = number;
+        vector<int>::iterator midPoint = begin;
+        advance(midPoint, length / 2);
+        auto first = async(ref(parallelFor_each), begin, midPoint, ref(func));
+        parallelFor_each(midPoint, end, func);
     }
-
-    vec_promise.set_value(newVec);
-}
-
-void asyncFor_each(vector<int>::iterator itBegin, vector<int>::iterator itEnd, void (&foo)(vector<int> vec))
-{
-    promise<vector<int>> vec_promise;
-    future<vector<int>> vec_future = vec_promise.get_future();
-    thread work_thread(asyncDivider, itBegin, itEnd, move(vec_promise));
-    vector<int> newVec = vec_future.get();
-    work_thread.join();
-
-    foo(newVec);
-
-    return asyncFor_each(itBegin, itEnd, foo);
 }
 
 int main()
 {
-    vector<int> vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    vector<int>::iterator itBegin = vec.begin();
-    vector<int>::iterator itEnd = vec.end() - 1;
-
-    asyncFor_each(itBegin, itEnd, print);
+    vector<int> numbers(100, 2);
+    parallelFor_each(numbers.begin(), numbers.end(), print);
 }

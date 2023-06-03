@@ -1,0 +1,12 @@
+FROM ubuntu
+
+COPY . /usr/src/dockerHomework1
+WORKDIR /usr/src/dockerHomework1
+
+RUN apt update
+RUN apt install -y g++ clang
+RUN g++ main.cpp -o maing
+RUN clang main.cpp -o mainclang
+
+ENTRYPOINT [./maing]
+CMD [./mainclang]
